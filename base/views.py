@@ -1,3 +1,4 @@
+from django.contrib.messages.api import error
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.db.models import Q
@@ -8,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Room, Topic
 from .forms import RoomForm
+from django.contrib.auth.forms import UserCreationForm
 
 
 def login_handler(request: HttpRequest):
@@ -15,7 +17,7 @@ def login_handler(request: HttpRequest):
         return redirect("home")
 
     if request.method == "POST":
-        username = request.POST.get("username")
+        username = request.POST.get("username").lower()
         password = request.POST.get("password")
 
         try:
@@ -41,7 +43,24 @@ def logout_handler(request: HttpRequest):
 
 
 def register_handler(request: HttpRequest):
-    context = {"page": "register"}
+    form = UserCreationForm()
+    context = {"page": "register", "form": form}
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+
+        try:
+            form.is_valid
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+
+            login(request, user)
+            return redirect("home")
+        except:
+            messages.error(
+                request, "An error occurred during registration please try again"
+            )
 
     return render(request, "base/login_register.html", context)
 

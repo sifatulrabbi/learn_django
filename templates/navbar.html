@@ -30,6 +30,10 @@
   </form>
 
   {% if request.user.is_authenticated %}
+  <small>Logged in as @{{request.user.username}}</small>
+  {% endif %}
+  <!---->
+  {% if request.user.is_authenticated %}
   <a href="{% url 'logout' %}"><button>Logout</button></a>
   {% else %}
   <a href="{% url 'login' %}"><button>Login</button></a>
