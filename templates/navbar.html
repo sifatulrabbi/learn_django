@@ -1,5 +1,37 @@
-<a href="/">
-  <h2>Logo</h2>
-</a>
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 70px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 7px;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    grid-gap: 1rem;
+  }
 
-<hr />
+  .navbar form input {
+    width: 12rem;
+    padding: 0.3rem;
+  }
+</style>
+
+<nav class="navbar">
+  <a href="/">
+    <h2>Logo</h2>
+  </a>
+
+  <form method="GET" action="{% url 'home' %}">
+    <input type="text" name="q" placeholder="Search rooms..." />
+  </form>
+
+  {% if request.user.is_authenticated %}
+  <a href="{% url 'logout' %}"><button>Logout</button></a>
+  {% else %}
+  <a href="{% url 'login' %}"><button>Login</button></a>
+  {% endif %}
+</nav>

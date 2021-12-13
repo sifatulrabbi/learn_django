@@ -1,21 +1,46 @@
 {% extends "main.html" %} {% block content %}
-<h1>Home page</h1>
-<div>
-  <div>
-    <a href="{% url 'create-room' %}"><button>Create room</button></a>
-  </div>
+
+<style>
+  .home-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+  }
+
+  aside {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+
+<div class="home-container">
+  <aside>
+    <h3>Browse Topics</h3>
+
+    <a href="{% url 'home' %}">All</a>
+
+    {% for topic in topics %}
+    <a href="{% url 'home' %}?q={{ topic.name }}">{{topic.name}}</a>
+    {% endfor%}
+  </aside>
 
   <div>
+    <a href="{% url 'create-room' %}"><button style="margin-bottom: 2rem">Create room</button></a>
+
+    <div style="margin-bottom: 1rem">{{ rooms_count }} rooms available</div>
+
     {% for room in rooms %}
-    <div>
-      <span>@{{room.host.username}}</span>
+    <div style="box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 8px; margin-bottom: 1rem; padding: 1rem">
+      <span>@{{ room.host.username }}</span>
       <h4>{{ room.id }} -- <a href="{% url 'room' room.id %}">{{ room.name }}</a></h4>
-      <small>{{room.topic.name}}</small>
+      <small>{{ room.topic.name }}</small>
+
+      {% if request.user.is_authenticated and request.user == room.host %}
       <a href="{% url 'update-room' room.id %}"><button>Edit</button></a>
       <a href="{% url 'delete-room' room.id %}"><button>Delete</button></a>
-      <hr />
+      {% endif %}
     </div>
     {% endfor %}
   </div>
 </div>
+
 {% endblock %}
